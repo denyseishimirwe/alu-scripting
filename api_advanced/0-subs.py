@@ -1,3 +1,5 @@
+ #!/usr/bin/python3
+
 import requests  # Import requests to make HTTP calls
 
 def number_of_subscribers(subreddit):
