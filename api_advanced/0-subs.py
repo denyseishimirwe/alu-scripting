@@ -1,46 +1,17 @@
 #!/usr/bin/python3
-"""
-Module that queries Reddit API for number of subscribers.
+"""Return the number of subscribers of a given subreddit"""
 
-This module provides functionality to retrieve the total number of
-subscribers for a given subreddit using the Reddit API.
-"""
 import requests
 
 
 def number_of_subscribers(subreddit):
-    """
-    Return the number of subscribers for a given subreddit.
-    
-    Args:
-        subreddit (str): The name of the subreddit
-        
-    Returns:
-        int: Number of subscribers, or 0 if invalid subreddit
-    """
-    if not isinstance(subreddit, str) or not subreddit:
-        return 0
-    
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
-    headers = {
-        'User-Agent': 'python:reddit.api.script:v1.0 (by /u/test_user)'
-    }
-    
+    """function that fetches number_of_subscribers"""
+    URL = "https://www.reddit.com/r/{}/about.json".format(subreddit)
+    HEADERS = {"User-Agent": "PostmanRuntime/7.35.0"}
+
     try:
-        response = requests.get(url, headers=headers, allow_redirects=False)
-        
-        # Check if we got redirected (invalid subreddit)
-        if response.status_code == 302:
-            return 0
-        
-        # Check if request was successful
-        if response.status_code == 200:
-            data = response.json()
-            # Check if the response contains valid subreddit data
-            if 'data' in data and 'subscribers' in data['data']:
-                return data['data']['subscribers']
-        
-        return 0
-    
-    except (requests.RequestException, ValueError, KeyError):
+        RESPONSE = requests.get(URL, headers=HEADERS, allow_redirects=False)
+        return RESPONSE.json().get("data").get("subscribers")
+
+    except Exception:
         return 0
