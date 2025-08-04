@@ -1,29 +1,46 @@
 #!/usr/bin/python3
 """
-Queries the Reddit API and prints the titles of the first 10 hot posts
-for a given subreddit. Prints nothing if the subreddit is invalid.
+Module for querying the Reddit API to get the titles of the first 10
+hot posts for a given subreddit.
 """
 
 import requests
 
 
 def top_ten(subreddit):
-    """Print titles of the first 10 hot posts for a subreddit."""
-    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    headers = {"User-Agent": "python:alx:0.1 (by /u/yourusername)"}
-    params = {"limit": 10}
+    """
+    Queries the Reddit API and prints the titles of the first 10 hot posts
+    listed for a given subreddit.
+
+    Args:
+        subreddit (str): The name of the subreddit.
+    """
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json?limit=10"
+    headers = {
+        "User-Agent": "MyCustomRedditApp/1.0"  
+    }
 
     try:
-        response = requests.get(url, headers=headers,
-                                params=params,
-                                allow_redirects=False,
-                                timeout=10)
-        if response.status_code != 200:
-            return
+        response = requests.get(url, headers=headers, allow_redirects=False)
 
-        posts = response.json().get("data", {}).get("children", [])
-        for post in posts:
-            print(post.get("data", {}).get("title"))
+        if response.status_code == 200:
+            data = response.json()
+            posts = data.get("data", {}).get("children", [])
 
-    except Exception:
-        pass
+            if not posts:
+                print(None) 
+                return
+
+            for post in posts:
+                title = post.get("data", {}).get("title")
+                if title:
+                    print(title)
+        elif response.status_code == 404 or response.is_redirect:
+            
+            print(None)
+        else:
+            print(None)
+    except requests.exceptions.RequestException:
+        print(None)
+    except ValueError: 
+        print(None)
